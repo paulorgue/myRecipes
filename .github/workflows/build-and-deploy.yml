@@ -1,0 +1,57 @@
+name: Build and Deploy Angular App
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Paso 1: Chequear el código del repositorio
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Paso 2: Instalar dependencias
+      - name: Install dependencies
+        run: npm install
+
+      # Paso 3: Construir el proyecto Angular
+      - name: Build Angular App
+        run: npm run build --base-href='/'
+
+      # Paso 4: Crear el directorio remoto para la app (si no existe)
+      - name: Create remote directory for Angular app
+        env:
+          REMOTE_USER: ${{ secrets.REMOTE_USER }}
+          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+          REMOTE_PASSWORD: ${{ secrets.REMOTE_PASSWORD }}
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y sshpass
+          mkdir -p ~/.ssh
+          ssh-keyscan -H ${{ secrets.REMOTE_HOST }} >> ~/.ssh/known_hosts
+          echo "Added ${{ secrets.REMOTE_HOST }} to known_hosts."
+          sshpass -p "${REMOTE_PASSWORD}" ssh ${REMOTE_USER}@${REMOTE_HOST} "mkdir -p /home/${REMOTE_USER}/angular-app"
+
+      # Paso 5: Copiar los archivos del build al servidor remoto
+      - name: Copy build to remote server
+        env:
+          REMOTE_USER: ${{ secrets.REMOTE_USER }}
+          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+          REMOTE_PASSWORD: ${{ secrets.REMOTE_PASSWORD }}
+        run: |
+          sshpass -p "${REMOTE_PASSWORD}" scp -r dist/recipes-paula/browser/* ${REMOTE_USER}@${REMOTE_HOST}:/home/${REMOTE_USER}/angular-app/
+
+      # Paso 6: Reiniciar el contenedor Docker con Nginx (que monta /home/<usuario>/angular-app)
+      - name: Restart Nginx Docker container
+        env:
+          REMOTE_USER: ${{ secrets.REMOTE_USER }}
+          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+          REMOTE_PASSWORD: ${{ secrets.REMOTE_PASSWORD }}
+        run: |
+          sshpass -p "${REMOTE_PASSWORD}" ssh ${REMOTE_USER}@${REMOTE_HOST} "docker stop angular-container || true && docker rm angular-container || true && docker run -d --name angular-container -p 8080:80 -v /home/${REMOTE_USER}/angular-app:/usr/share/nginx/html:ro nginx:latest"
+
