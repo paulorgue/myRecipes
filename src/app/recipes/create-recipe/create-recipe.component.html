@@ -1,0 +1,66 @@
+<div class="container">
+  <form [formGroup]="mealForm">
+    <div class="mb-3">
+      <label for="strMeal" class="form-label">Nom</label>
+      <input
+        type="text"
+        class="form-control"
+        id="strMeal"
+        aria-describedby="strMeal"
+        name="strMeal"
+        formControlName="strMeal"
+        [ngClass]="{
+          'is-valid': strMealValid,
+          'is-invalid': !strMealValid
+        }"
+      />
+    </div>
+    <div class="mb-3">
+      <label for="strInstructions" class="form-label">Instruccions</label>
+      <textarea
+        class="form-control"
+        id="strInstructions"
+        name="strInstructions"
+        formControlName="strInstructions"
+      ></textarea>
+    </div>
+
+    <div formArrayName="ingredients">
+      @for (ingredient of IngredientsArray.controls; track $index) {
+      <div class="input-group mb-3">
+        <select name="selectIngredient" id="ingredient{{$index}}" class="form-select"
+        name="ingredient{{$index}}" [formControlName]="$index">
+          @for (ingredient of allIngredients; track $index) {
+            <option value="{{ ingredient.idIngredient }}">{{ ingredient.strIngredient }}</option>
+          }
+        </select>        
+       <!--  <input
+          type="text"
+          class="form-control"
+          id="ingredient{{ $index }}"
+          name="ingredient{{ $index }}"
+          [formControlName]="$index"
+          placeholder="ingredient"
+          [ngClass]="{
+            'is-valid': ingredient.valid && ingredient.touched,
+            'is-invalid': ingredient.invalid && ingredient.touched
+          }"
+        /> -->
+        <button class="btn btn-outline-danger" (click)="delIngredient($index)">
+          Borrar
+        </button>
+      </div>
+      }
+      <button class="btn btn-primary" (click)="addIngredient()">
+        Afegir Ingredient
+      </button>
+    </div>
+    @if (!recipeID) {
+      <button type="submit" class="btn btn-primary" (click)="submit()">Crear receta</button>
+      }
+      @else {
+        <button type="submit" class="btn btn-primary" (click)="submit()">Guardar Cambios</button>
+      }
+  </form>
+  <!-- {{ mealForm.value | json }} -->
+</div>

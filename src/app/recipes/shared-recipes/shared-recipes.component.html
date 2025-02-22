@@ -1,0 +1,47 @@
+<div class="container">
+  <h2>{{recipe?.meals?.strMeal}} {{user?.id | stringToEmoji}}</h2>
+  <div class="row">
+    <div class="col-md-9">
+      <!-- Imagen flotante -->
+      <img src="{{recipe?.meals?.strMealThumb}}" alt="{{recipe?.meals?.strMeal}}"
+           class="img-fluid float-md-end ms-md-4 mt-md-4 mb-3 rounded"
+           style="max-width: 500px;">
+
+      <!-- Título y texto -->
+
+      <h3>Instructions</h3>
+      <div class="list-group">
+
+      @for(i of instructions; track $index) {
+        <button type="button" class="list-group-item list-group-item-action" (click)="joinInstruction($index)">{{i.phrase}}
+          @for (u of usersByStep[$index]; track $index) {
+            <span class="badge">{{u | stringToEmoji}}</span>
+          }
+        </button>
+      }
+    </div>
+    </div>
+    <div class="col-md-3">
+      <h3>Events</h3>
+      <div class="list-group">
+      @for (step of recipe?.shared_recipes_events; track $index) {
+        <button type="button" class="list-group-item list-group-item-action">{{step?.step}}{{step?.user | stringToEmoji}}</button>
+            <h5 class="card-title"></h5>
+
+      }
+    </div>
+    </div>
+  </div>
+
+  <!-- Lista de ingredientes -->
+  <h3>Ingredients</h3>
+  <div class="row row-cols-2 row-cols-md-3 row-cols-lg-5 g-4">
+    @for (ingredient of ingredients; track $index) {
+      @if (ingredient) {
+        <div class="col">
+          <app-ingredient [ingredient]="ingredient"></app-ingredient>
+        </div>
+      }
+    }
+  </div>
+</div>

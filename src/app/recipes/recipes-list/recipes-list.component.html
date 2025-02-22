@@ -1,0 +1,16 @@
+<div class="container">
+
+    <div class="row g-4 mt-1">
+
+@for (recipe of recipes | filter:searchValue; track $index) {
+  <div class="col">
+<app-recipe-card [recipe]="recipe"
+></app-recipe-card>
+</div>
+
+}
+
+
+
+</div>
+</div>

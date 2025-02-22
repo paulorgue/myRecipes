@@ -1,0 +1,41 @@
+/* You can add global styles to this file, and also import other style files */
+// Define tus colores personalizados
+
+@use "sass:map";
+$primary: #25408f;
+$secondary: #8f5325;
+$success: #3e8d63;
+$info: #13101c;
+$warning: #945707;
+$danger: #ffc800;
+$light: #061625;
+$dark: #343a40;
+
+
+$theme-colors: (
+  primary: $primary,
+  secondary: $secondary,
+  success: $success,
+  info: $info,
+  warning: $warning,
+  danger: $danger,
+  light: $light,
+  dark: $dark,
+  // add any additional color below
+);
+
+// https://coolors.co/palette/ff9f1c-ffbf69-ffffff-cbf3f0-2ec4b6
+$custom-colors: (
+  "brand-blue": #2EC4B6,
+  "brand-orange": #FF9F1C,
+  "brand-orange-light": #FFBF69,
+  "brand-blue-light": #CBF3F0
+
+);
+
+// Combina las paletas
+$theme-colors: map.merge($theme-colors, $custom-colors);
+
+
+
+@import "../node_modules/bootstrap/scss/bootstrap" 
