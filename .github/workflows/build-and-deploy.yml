@@ -44,7 +44,7 @@ jobs:
           REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
           REMOTE_PASSWORD: ${{ secrets.REMOTE_PASSWORD }}
         run: |
-          sshpass -p "${REMOTE_PASSWORD}" scp -r dist/recipes-paula/browser/* ${REMOTE_USER}@${REMOTE_HOST}:/home/${REMOTE_USER}/angular-app/
+          sshpass -p "${REMOTE_PASSWORD}" scp -r dist/myrecipes/browser/* ${REMOTE_USER}@${REMOTE_HOST}:/home/${REMOTE_USER}/angular-app/
 
       # Paso 6: Reiniciar el contenedor Docker con Nginx (que monta /home/<usuario>/angular-app)
       - name: Restart Nginx Docker container
